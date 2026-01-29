@@ -1,6 +1,6 @@
-# Spotipy - Consola de Reproducción Musical en Python
+# Notify - Consola de Reproducción Musical en Python
 
-**Spotipy** es una simulación de plataforma de streaming de música desarrollada en Python. Este proyecto fue diseñado con un enfoque educativo para demostrar la implementación robusta de los **4 Pilares de la Programación Orientada a Objetos (POO)** y arquitectura de software modular.
+**Notify** es una simulación de plataforma de streaming de música desarrollada en Python. Este proyecto fue diseñado con un enfoque educativo para demostrar la implementación robusta de los **4 Pilares de la Programación Orientada a Objetos (POO)** y arquitectura de software modular.
 
 El sistema permite la gestión de usuarios con roles jerárquicos (Clientes y Administradores), creación de playlists y reproducción de audio real utilizando la librería `pygame-ce`.
 
@@ -35,7 +35,7 @@ El proyecto sigue una arquitectura modular separando responsabilidades:
 ## 📂 Estructura del Proyecto
 
 ```text
-Spotipy/
+Notify/
 ├── main.py                   # Punto de entrada de la aplicación
 ├── requirements.txt          # Dependencias del proyecto
 ├── assets/
