@@ -1,4 +1,14 @@
+import sys
+import os
+
+# --- BLOQUE DE CONFIGURACIÓN DE RUTA ---
+# Esto permite encontrar la carpeta 'utils' aunque ejecutes este archivo
+# directamente desde dentro de 'modelos'
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# ---------------------------------------
+
 from abc import ABC, abstractmethod
+from utils.excepciones import ListaVaciaError
 
 
 class RecursoMultimedia(ABC):
@@ -22,6 +32,11 @@ class RecursoMultimedia(ABC):
     def duracion(self):
         # Getter publico para duración.
         return self._duracion
+
+    @property
+    def img_portada(self):
+        # Getter publico para Imagen de Portada.
+        return self._imagen_portada
 
     @abstractmethod
     def reproducir(self):
@@ -59,6 +74,14 @@ class Cancion(RecursoMultimedia):
         self.__genero = genero
         self.__ruta_archivo = ruta_archivo
 
+    def __str__(self):
+        cadena = f"{self.titulo}"
+        return cadena
+
+    def __repr__(self):
+        cadena = f"{self.titulo}"
+        return cadena
+        
     # Getter de los atributos encapsulados.
     @property
     def artista(self):
@@ -84,3 +107,96 @@ class Cancion(RecursoMultimedia):
         """
         print(f"   🎵 Preparando sencillo: '{self.titulo}' de {self.__artista}...")
         return self.__ruta_archivo
+
+class Playlist(RecursoMultimedia):
+    """
+    Clase Playlist,  colección mutable de canciones y es creada por el cliente,
+    administrador y modificada por los mismos.
+    """
+    def __init__(self, titulo, img_portada, duracion, descripcion : str, canciones : list = []):
+        # Constructor de la clase padre.
+        super().__init__(titulo, img_portada, duracion)
+        # Atributos privados (-) propios de Playlist
+        self.__descripcion = descripcion
+        self.__canciones = canciones
+        self.indice_actual = 0
+        self.reproduciendo = False
+
+    # Getter de los atributos encapsulados.
+    @property
+    def descripcion(self):
+        return self.__descripcion
+
+    @property
+    def canciones(self):
+        return self.__canciones
+
+    def agregar_cancion(self,cancion:Cancion):
+        if isinstance(cancion, Cancion):
+            self.__canciones.append(cancion)
+            self._duracion+=cancion.duracion
+            print(f"[+] {cancion.titulo} agregada a {self.titulo}")
+
+    def eliminar_cancion(self,cancion:Cancion):
+        if cancion in self.__canciones:
+            self.__canciones.remove(cancion)
+            self._duracion-=cancion.duracion
+            print(f"[-] {cancion.titulo} eliminada de {self.titulo}")
+
+    # Poliformismos para metodo reproducir.
+    def reproducir(self):
+        """
+        Versión de reproducir de Playlist.
+        No retorna una ruta, sino la LISTA COMPLETA de objetos cancion, para que el REPRODUCTOR sepa que debe encolarlas todas.
+        """
+        if not self.__canciones:
+            raise ListaVaciaError(f"La playlist '{self.titulo}' no tiene canciones.")
+        
+        print(f"   📂 Cargando Playlist: {self.titulo} ({len(self.__canciones)} pistas)")
+        # Retornamos la lista completa para que el controlador la gestione
+        return self.__canciones
+
+class Album(RecursoMultimedia):
+    """
+    Colección estática de canciones (lanzamiento oficial del artista).
+    """
+    def __init__(self, titulo,artista,año,canciones,img_portada):
+        #Calculamos la duración total sumando las canciones al nacer.
+        duracion_total=sum(c.duracion for c in cancion)
+        super().__init__(titulo,img_portada,duración_total)
+        self.__artista = artista
+        self.__año = año
+        self.__canciones = canciones
+
+    @property
+    def artista(self):
+        return self.__artista
+
+    # Poliformismos para metodo reproducir.
+    def reproducir(self):
+        """
+        Versión de reproducir de Album.
+        Basicamente hace lo mismo que la de Playlist, manda la lista de canciones al reproductor.
+        """
+        if not self.__canciones:
+            raise ListaVaciaError(f"El Álbum '{self.titulo}' esta vacío (Error de datos).")
+        
+        print(f"   💿 Poniendo el vinilo: {self.titulo} - {self.__artista} ({self.__anio})")
+        return self.__canciones
+
+if __name__=="__main__":
+    Can=Cancion("CanciónPrueba","","","","",ruta_archivo="C:kajsk")
+    Can1=Cancion("CanciónPrueba","","","","",ruta_archivo="C:k")
+    testplay=Playlist("Prueba","IMG",212,"Lista para pruebas de las funciones.")
+
+    print(testplay.titulo)
+    print(testplay.img_portada)
+    print(testplay.duracion)
+    print(testplay.descripcion)
+    print(testplay.canciones)
+    print(Can.ruta_archivo)
+    testplay.agregar_cancion(Can)
+    testplay.agregar_cancion(Can1)
+    print(testplay.canciones)
+    testplay.eliminar_cancion(Can1)
+    print(testplay.canciones)
