@@ -4,7 +4,7 @@ import os
 # --- BLOQUE DE CONFIGURACIÓN DE RUTA ---
 # Esto permite encontrar la carpeta 'utils' aunque ejecutes este archivo
 # directamente desde dentro de 'modelos'
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # ---------------------------------------
 
 from abc import ABC, abstractmethod
@@ -81,7 +81,7 @@ class Cancion(RecursoMultimedia):
     def __repr__(self):
         cadena = f"{self.titulo}"
         return cadena
-        
+
     # Getter de los atributos encapsulados.
     @property
     def artista(self):
@@ -108,14 +108,24 @@ class Cancion(RecursoMultimedia):
         print(f"   🎵 Preparando sencillo: '{self.titulo}' de {self.__artista}...")
         return self.__ruta_archivo
 
+
 class Playlist(RecursoMultimedia):
     """
     Clase Playlist,  colección mutable de canciones y es creada por el cliente,
     administrador y modificada por los mismos.
     """
+<<<<<<< HEAD
     def __init__(self, titulo, descripcion : str, img_portada : str = "playlist.jpg"):
         # Constructor de la clase padre, se inicia con duración cero.
         super().__init__(titulo, img_portada, duracion=0)
+=======
+
+    def __init__(
+        self, titulo, img_portada, duracion, descripcion: str, canciones: list = []
+    ):
+        # Constructor de la clase padre.
+        super().__init__(titulo, img_portada, duracion)
+>>>>>>> a2d2aeea48f20ed03495767449321c6166e432d3
         # Atributos privados (-) propios de Playlist
         self.__descripcion = descripcion
         self.__canciones = [] # Lista Vacia.
@@ -129,16 +139,16 @@ class Playlist(RecursoMultimedia):
     def canciones(self):
         return self.__canciones
 
-    def agregar_cancion(self,cancion:Cancion):
+    def agregar_cancion(self, cancion: Cancion):
         if isinstance(cancion, Cancion):
             self.__canciones.append(cancion)
-            self._duracion+=cancion.duracion
+            self._duracion += cancion.duracion
             print(f"[+] {cancion.titulo} agregada a {self.titulo}")
 
-    def eliminar_cancion(self,cancion:Cancion):
+    def eliminar_cancion(self, cancion: Cancion):
         if cancion in self.__canciones:
             self.__canciones.remove(cancion)
-            self._duracion-=cancion.duracion
+            self._duracion -= cancion.duracion
             print(f"[-] {cancion.titulo} eliminada de {self.titulo}")
 
     # Poliformismos para metodo reproducir.
@@ -149,19 +159,30 @@ class Playlist(RecursoMultimedia):
         """
         if not self.__canciones:
             raise ListaVaciaError(f"La playlist '{self.titulo}' no tiene canciones.")
-        
-        print(f"   📂 Cargando Playlist: {self.titulo} ({len(self.__canciones)} pistas)")
+
+        print(
+            f"   📂 Cargando Playlist: {self.titulo} ({len(self.__canciones)} pistas)"
+        )
         # Retornamos la lista completa para que el controlador la gestione
         return self.__canciones
+
 
 class Album(RecursoMultimedia):
     """
     Colección estática de canciones (lanzamiento oficial del artista).
     """
+<<<<<<< HEAD
     def __init__(self, titulo,artista,año,canciones,img_portada = "album.jpg"):
         #Calculamos la duración total sumando las canciones al nacer.
         duracion_total=sum(c.duracion for c in canciones)
         super().__init__(titulo,img_portada,duracion_total)
+=======
+
+    def __init__(self, titulo, artista, año, canciones, img_portada):
+        # Calculamos la duración total sumando las canciones al nacer.
+        duracion_total = sum(c.duracion for c in canciones)
+        super().__init__(titulo, img_portada, duracion_total)
+>>>>>>> a2d2aeea48f20ed03495767449321c6166e432d3
         self.__artista = artista
         self.__año = año
         self.__canciones = canciones
@@ -177,6 +198,7 @@ class Album(RecursoMultimedia):
         Basicamente hace lo mismo que la de Playlist, manda la lista de canciones al reproductor.
         """
         if not self.__canciones:
+<<<<<<< HEAD
             raise ListaVaciaError(f"El Álbum '{self.titulo}' esta vacío (Error de datos).")
         
         print(f"   💿 Poniendo el vinilo: {self.titulo} - {self.__artista} ({self.__año})")
@@ -206,3 +228,31 @@ if __name__ == "__main__":
         
     except Exception as e:
         print(f"Error durante la prueba: {e}")
+=======
+            raise ListaVaciaError(
+                f"El Álbum '{self.titulo}' esta vacío (Error de datos)."
+            )
+
+        print(
+            f"   💿 Poniendo el vinilo: {self.titulo} - {self.__artista} ({self.__año})"
+        )
+        return self.__canciones
+
+
+if __name__ == "__main__":
+    Can = Cancion("CanciónPrueba", "", "", "", "", ruta_archivo="C:kajsk")
+    Can1 = Cancion("CanciónPrueba", "", "", "", "", ruta_archivo="C:k")
+    testplay = Playlist("Prueba", "IMG", 212, "Lista para pruebas de las funciones.")
+
+    print(testplay.titulo)
+    print(testplay.img_portada)
+    print(testplay.duracion)
+    print(testplay.descripcion)
+    print(testplay.canciones)
+    print(Can.ruta_archivo)
+    testplay.agregar_cancion(Can)
+    testplay.agregar_cancion(Can1)
+    print(testplay.canciones)
+    testplay.eliminar_cancion(Can1)
+    print(testplay.canciones)
+>>>>>>> a2d2aeea48f20ed03495767449321c6166e432d3
