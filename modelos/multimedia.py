@@ -117,12 +117,6 @@ class Playlist(RecursoMultimedia):
     def __init__(self, titulo, descripcion : str, img_portada : str = "playlist.jpg"):
         # Constructor de la clase padre, se inicia con duración cero.
         super().__init__(titulo, img_portada, duracion=0)
-
-    def __init__(
-        self, titulo, img_portada, duracion, descripcion: str, canciones: list = []
-    ):
-        # Constructor de la clase padre.
-        super().__init__(titulo, img_portada, duracion)
         # Atributos privados (-) propios de Playlist
         self.__descripcion = descripcion
         self.__canciones = [] # Lista Vacia.
@@ -172,11 +166,6 @@ class Album(RecursoMultimedia):
         #Calculamos la duración total sumando las canciones al nacer.
         duracion_total=sum(c.duracion for c in canciones)
         super().__init__(titulo,img_portada,duracion_total)
-
-    def __init__(self, titulo, artista, año, canciones, img_portada):
-        # Calculamos la duración total sumando las canciones al nacer.
-        duracion_total = sum(c.duracion for c in canciones)
-        super().__init__(titulo, img_portada, duracion_total)
         self.__artista = artista
         self.__año = año
         self.__canciones = canciones
