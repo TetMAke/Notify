@@ -59,12 +59,12 @@ class Cancion(RecursoMultimedia):
     def __init__(
         self,
         titulo: str,
-        img_portada: str,
         artista: str,
         album: str,
         genero: str,
         ruta_archivo: str,
         duracion: float = 0,
+        img_portada: str = "default.jpg",
     ):
         # Constructor de la clase padre.
         super().__init__(titulo, img_portada, duracion)
@@ -113,14 +113,12 @@ class Playlist(RecursoMultimedia):
     Clase Playlist,  colección mutable de canciones y es creada por el cliente,
     administrador y modificada por los mismos.
     """
-    def __init__(self, titulo, img_portada, duracion, descripcion : str, canciones : list = []):
-        # Constructor de la clase padre.
-        super().__init__(titulo, img_portada, duracion)
+    def __init__(self, titulo, descripcion : str, img_portada : str = "playlist.jpg"):
+        # Constructor de la clase padre, se inicia con duración cero.
+        super().__init__(titulo, img_portada, duracion=0)
         # Atributos privados (-) propios de Playlist
         self.__descripcion = descripcion
-        self.__canciones = canciones
-        self.indice_actual = 0
-        self.reproduciendo = False
+        self.__canciones = [] # Lista Vacia.
 
     # Getter de los atributos encapsulados.
     @property
@@ -160,10 +158,10 @@ class Album(RecursoMultimedia):
     """
     Colección estática de canciones (lanzamiento oficial del artista).
     """
-    def __init__(self, titulo,artista,año,canciones,img_portada):
+    def __init__(self, titulo,artista,año,canciones,img_portada = "album.jpg"):
         #Calculamos la duración total sumando las canciones al nacer.
-        duracion_total=sum(c.duracion for c in cancion)
-        super().__init__(titulo,img_portada,duración_total)
+        duracion_total=sum(c.duracion for c in canciones)
+        super().__init__(titulo,img_portada,duracion_total)
         self.__artista = artista
         self.__año = año
         self.__canciones = canciones
@@ -181,22 +179,30 @@ class Album(RecursoMultimedia):
         if not self.__canciones:
             raise ListaVaciaError(f"El Álbum '{self.titulo}' esta vacío (Error de datos).")
         
-        print(f"   💿 Poniendo el vinilo: {self.titulo} - {self.__artista} ({self.__anio})")
+        print(f"   💿 Poniendo el vinilo: {self.titulo} - {self.__artista} ({self.__año})")
         return self.__canciones
 
-if __name__=="__main__":
-    Can=Cancion("CanciónPrueba","","","","",ruta_archivo="C:kajsk")
-    Can1=Cancion("CanciónPrueba","","","","",ruta_archivo="C:k")
-    testplay=Playlist("Prueba","IMG",212,"Lista para pruebas de las funciones.")
+# --- ZONA DE PRUEBAS (Al final del archivo) ---
+if __name__ == "__main__":
+    try:
+        # 1. Creamos una canción falsa (sin archivo real por ahora)
+        c1 = Cancion("Billie Jean", "Michael Jackson", "Thriller", "Pop", "ruta/falsa/c1.mp3", duracion=294)
+        c2 = Cancion("Beat It", "Michael Jackson", "Thriller", "Rock", "ruta/falsa/c2.mp3", duracion=258)
+        
+        # 2. Probamos la canción
+        print(f"Probando Canción: {c1.titulo}")
+        c1.reproducir()
+        
+        # 3. Creamos un Album con esas canciones
+        mi_album = Album("Thriller", "Michael Jackson", 1982, [c1, c2])
+        print(f"\nProbando Álbum: {mi_album.titulo} (Duración: {mi_album.duracion} seg)")
+        mi_album.reproducir()
 
-    print(testplay.titulo)
-    print(testplay.img_portada)
-    print(testplay.duracion)
-    print(testplay.descripcion)
-    print(testplay.canciones)
-    print(Can.ruta_archivo)
-    testplay.agregar_cancion(Can)
-    testplay.agregar_cancion(Can1)
-    print(testplay.canciones)
-    testplay.eliminar_cancion(Can1)
-    print(testplay.canciones)
+        # 4. Creamos una Playlist y agregamos canciones
+        mi_playlist = Playlist("Gym Motivation", "Para entrenar duro")
+        mi_playlist.agregar_cancion(c2)
+        print(f"\nProbando Playlist: {mi_playlist.titulo}")
+        mi_playlist.reproducir()
+        
+    except Exception as e:
+        print(f"Error durante la prueba: {e}")
