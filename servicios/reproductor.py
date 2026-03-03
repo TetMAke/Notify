@@ -1,6 +1,7 @@
 import sys
 import os
 import time
+import threading
 
 # --- CONFIGURACIÓN DE RUTA ---
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -29,7 +30,8 @@ class Reproductor:
         self.cola = []  # Lista de objetos Cancion
         self.indice_actual = 0  # Cuál canción de la cola está sonando
         self.reproduciendo = False  # Estado del reproductor.
-        global start_time
+        self.start_time = 0
+        self.curren_time = 0
 
         # Inicializar motor de audio si es posible
         if PYGAME_DISPONIBLE:
@@ -38,6 +40,12 @@ class Reproductor:
             pygame.mixer.music.set_volume(self.volumen)
         else:
             self.volumen = 0.0
+        # --- NUEVO: Arrancamos el vigilante en segundo plano ---
+        # daemon=True significa que este hilo morirá automáticamente cuando cierres el programa
+        self.hilo_vigilante = threading.Thread(
+            target=self._vigilar_cancion, daemon=True
+        )
+        self.hilo_vigilante.start()
 
     def cargar_origen(self, recurso):
         """
@@ -95,6 +103,30 @@ class Reproductor:
             print(f"   (Modo Simulación: Archivo no encontrado o Pygame ausente)")
             print("   🎶 [Suena música imaginaria] 🎶")
             self.reproduciendo = True
+
+    def _vigilar_cancion(self):
+        """
+        Hilo en segundo plano que revisa constantemente si la canción actual llegó a su fin.
+        """
+        while True:
+            time.sleep(1)  # Revisamos cada 1 segundo para no saturar el procesador
+
+            # Solo actuamos si se supone que la música debería estar sonando
+            if PYGAME_DISPONIBLE and self.reproduciendo:
+
+                # get_busy() es True si hay sonido, False si hay silencio absoluto
+                if not pygame.mixer.music.get_busy():
+
+                    # Para evitar que el vigilante se vuelva loco, apagamos el estado temporalmente
+                    self.reproduciendo = False
+
+                    print("\n[🎵 Pista terminada. Cambiando automáticamente...]")
+                    # Llamamos a nuestra propia función de Siguiente
+                    self.siguiente()
+
+                    # # Como esto se imprime mientras el usuario ve el menú de input,
+                    # # le recordamos sutilmente que presione Enter para limpiar la pantalla
+                    # print(">> Presiona ENTER para actualizar la pantalla...")
 
     def pausar(self):
         if PYGAME_DISPONIBLE and self.reproduciendo:
@@ -195,7 +227,7 @@ if __name__ == "__main__":
     dj.siguiente()
     # dj.siguiente()
 
-    time.sleep(5)
+    time.sleep(3)
     print("\n--- PRUEBA: Anterior ---")
     dj.anterior()
 
