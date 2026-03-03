@@ -8,7 +8,7 @@ from modelos.usuario import Cliente, Administrador
 from modelos.multimedia import Cancion, Playlist, Album
 from servicios.reproductor import Reproductor
 from utils.excepciones import (
-    SpotipyError,
+    NotifyError,
     UsuarioNoEncontradoError,
     ContrasenaIncorrectaError,
 )
@@ -115,7 +115,7 @@ def limpiar_pantalla():
 def inicializar_datos():
     """Crea datos de prueba para que el sistema no esté vacío."""
     limpiar_pantalla()
-    print("🔄 Inicializando sistema Spotipy...")
+    print("🔄 Inicializando sistema Notify...")
     time.sleep(1)  # Pequeña pausa dramática
 
     # 1. Crear Canciones (Simuladas)
@@ -159,7 +159,7 @@ def sistema_login():
     """Maneja la autenticación del usuario."""
     while True:
         limpiar_pantalla()
-        print("=== 🔐 BIENVENIDO A SPOTIPY ===")
+        print("=== 🔐 BIENVENIDO A Notify ===")
         print("-------------------------------")
         email = input("📧 Correo: ")
         password = input("🔑 Contraseña: ")
@@ -182,7 +182,7 @@ def sistema_login():
             time.sleep(1.5)  # Pausa para ver el saludo
             return usuario_encontrado
 
-        except SpotipyError as e:
+        except NotifyError as e:
             print(f"\n❌ Error de acceso: {e.mensaje}")
             input("   (Presiona Enter para intentar de nuevo...)")
 
@@ -682,5 +682,5 @@ if __name__ == "__main__":
             menu_principal(usuario_activo)
 
         except KeyboardInterrupt:
-            print("\n\nApagando Spotipy... ¡Adiós!")
+            print("\n\nApagando Notify... ¡Adiós!")
             break

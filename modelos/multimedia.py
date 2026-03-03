@@ -14,7 +14,7 @@ from utils.excepciones import ListaVaciaError
 class RecursoMultimedia(ABC):
     """
     Clase Abstracta (Padre) que define la estructura básica de cualquier
-    contenido reproducible en Spotipy (Canciones, Playlists, Albumes).
+    contenido reproducible en Notify (Canciones, Playlists, Albumes).
     """
 
     def __init__(self, titulo: str, img_portada: str, duracion: float = 0.0):
@@ -114,12 +114,13 @@ class Playlist(RecursoMultimedia):
     Clase Playlist,  colección mutable de canciones y es creada por el cliente,
     administrador y modificada por los mismos.
     """
-    def __init__(self, titulo, descripcion : str, img_portada : str = "playlist.jpg"):
+
+    def __init__(self, titulo, descripcion: str, img_portada: str = "playlist.jpg"):
         # Constructor de la clase padre, se inicia con duración cero.
         super().__init__(titulo, img_portada, duracion=0)
         # Atributos privados (-) propios de Playlist
         self.__descripcion = descripcion
-        self.__canciones = [] # Lista Vacia.
+        self.__canciones = []  # Lista Vacia.
 
     # Getter de los atributos encapsulados.
     @property
@@ -162,10 +163,11 @@ class Album(RecursoMultimedia):
     """
     Colección estática de canciones (lanzamiento oficial del artista).
     """
-    def __init__(self, titulo,artista,año,canciones,img_portada = "album.jpg"):
-        #Calculamos la duración total sumando las canciones al nacer.
-        duracion_total=sum(c.duracion for c in canciones)
-        super().__init__(titulo,img_portada,duracion_total)
+
+    def __init__(self, titulo, artista, año, canciones, img_portada="album.jpg"):
+        # Calculamos la duración total sumando las canciones al nacer.
+        duracion_total = sum(c.duracion for c in canciones)
+        super().__init__(titulo, img_portada, duracion_total)
         self.__artista = artista
         self.__año = año
         self.__canciones = canciones
@@ -181,25 +183,46 @@ class Album(RecursoMultimedia):
         Basicamente hace lo mismo que la de Playlist, manda la lista de canciones al reproductor.
         """
         if not self.__canciones:
-            raise ListaVaciaError(f"El Álbum '{self.titulo}' esta vacío (Error de datos).")
-        
-        print(f"   💿 Poniendo el vinilo: {self.titulo} - {self.__artista} ({self.__año})")
+            raise ListaVaciaError(
+                f"El Álbum '{self.titulo}' esta vacío (Error de datos)."
+            )
+
+        print(
+            f"   💿 Poniendo el vinilo: {self.titulo} - {self.__artista} ({self.__año})"
+        )
         return self.__canciones
+
 
 # --- ZONA DE PRUEBAS (Al final del archivo) ---
 if __name__ == "__main__":
     try:
         # 1. Creamos una canción falsa (sin archivo real por ahora)
-        c1 = Cancion("Billie Jean", "Michael Jackson", "Thriller", "Pop", "ruta/falsa/c1.mp3", duracion=294)
-        c2 = Cancion("Beat It", "Michael Jackson", "Thriller", "Rock", "ruta/falsa/c2.mp3", duracion=258)
-        
+        c1 = Cancion(
+            "Billie Jean",
+            "Michael Jackson",
+            "Thriller",
+            "Pop",
+            "ruta/falsa/c1.mp3",
+            duracion=294,
+        )
+        c2 = Cancion(
+            "Beat It",
+            "Michael Jackson",
+            "Thriller",
+            "Rock",
+            "ruta/falsa/c2.mp3",
+            duracion=258,
+        )
+
         # 2. Probamos la canción
         print(f"Probando Canción: {c1.titulo}")
         c1.reproducir()
-        
+
         # 3. Creamos un Album con esas canciones
         mi_album = Album("Thriller", "Michael Jackson", 1982, [c1, c2])
-        print(f"\nProbando Álbum: {mi_album.titulo} (Duración: {mi_album.duracion} seg)")
+        print(
+            f"\nProbando Álbum: {mi_album.titulo} (Duración: {mi_album.duracion} seg)"
+        )
         mi_album.reproducir()
 
         # 4. Creamos una Playlist y agregamos canciones
@@ -207,6 +230,6 @@ if __name__ == "__main__":
         mi_playlist.agregar_cancion(c2)
         print(f"\nProbando Playlist: {mi_playlist.titulo}")
         mi_playlist.reproducir()
-        
+
     except Exception as e:
         print(f"Error durante la prueba: {e}")
